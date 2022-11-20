@@ -1,0 +1,3 @@
+/home/eyup/CLionProjects/Editor/cmake-build-debug/CMakeFiles/Editor.dir
+/home/eyup/CLionProjects/Editor/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/eyup/CLionProjects/Editor/cmake-build-debug/CMakeFiles/rebuild_cache.dir
