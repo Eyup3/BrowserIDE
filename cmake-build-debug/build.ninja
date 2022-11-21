@@ -55,6 +55,12 @@ build CMakeFiles/Editor.dir/main.c.o: C_COMPILER__Editor_Debug /home/eyup/CLionP
   OBJECT_DIR = CMakeFiles/Editor.dir
   OBJECT_FILE_DIR = CMakeFiles/Editor.dir
 
+build CMakeFiles/Editor.dir/mynclib.c.o: C_COMPILER__Editor_Debug /home/eyup/CLionProjects/Editor/mynclib.c || cmake_object_order_depends_target_Editor
+  DEP_FILE = CMakeFiles/Editor.dir/mynclib.c.o.d
+  FLAGS = -g -std=gnu99
+  OBJECT_DIR = CMakeFiles/Editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/Editor.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Editor
@@ -63,7 +69,7 @@ build CMakeFiles/Editor.dir/main.c.o: C_COMPILER__Editor_Debug /home/eyup/CLionP
 #############################################
 # Link the executable Editor
 
-build Editor: C_EXECUTABLE_LINKER__Editor_Debug CMakeFiles/Editor.dir/main.c.o
+build Editor: C_EXECUTABLE_LINKER__Editor_Debug CMakeFiles/Editor.dir/main.c.o CMakeFiles/Editor.dir/mynclib.c.o
   FLAGS = -g
   LINK_LIBRARIES = -lncursesw
   OBJECT_DIR = CMakeFiles/Editor.dir

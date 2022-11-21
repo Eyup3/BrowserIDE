@@ -1,76 +1,79 @@
-/***RandomFunctions***/
-void debugMode();
-void updateTerminalInfo();
-
-
-
 #include <ncurses.h>
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
+
+#include "mynclib.h"
 
 #define ctrl(x) (x & 0x1F)
 
+#define BUFFERCOLUMN 100
+#define BUFFERROW 5
 
-int curX, curY;
-int terX, terY;
-int run = 1;
-
-char Buffer[5][100]; // links länge der Reihe
-
-int setupnc()
+typedef struct
 {
-    initscr();
+    char Buffer[100];
+    int length;
+} Row;
 
-    raw();
-    noecho();
+typedef struct
+{
+    int curX, curY;
+    int terX, terY;
+    int run;
+
+    Row lines[5]; //
+
+} Terminal;
 
 
-    keypad(stdscr, 1);
-}
-int handlekeyinput()
+int handlekeyinput(Terminal* main)
 {
     int ch = wgetch(stdscr);
 
     if (33 <= ch && ch <= 126)
     {
         printw("%c",(char)ch);
-        curX++;
+        main->curX++;
     }
     switch (ch) {
         case KEY_UP:
-            curY--;
+            main->curY--;
             break;
         case KEY_DOWN:
-            curY++;
+            main->curY++;
             break;
         case KEY_LEFT:
-            curX--;
+            main->curX--;
             break;
         case KEY_RIGHT:
-            curX++;
+            main->curX++;
             break;
         case ctrl('c'):
-            run = 0;
+            main->run = 0;
             break;
-        case ctrl('d'):
-            debugMode();
     }
 
-    move(curY, curX);
+    move(main->curY, main->curX);
 
 }
 
-int inputfile()
+int inputfile(Terminal* main)
 {
     int i = 0;
     FILE* fptr = fopen("../text.txt", "r");
     if(fptr == NULL) {printw("Kill");}
     char content[100];
 
+    for (int j = 0; j < 100; ++j) {
+        content[j] = '\0';
+    }
+
     while(fgets(content, 100, fptr) != NULL)
     {
         for (int j = 0; j <100; ++j) {
-            Buffer[i][j] = content[j];
+            if(content[j] == '\0') { main->lines[i].length = j; }
+            main->lines[i].Buffer[j] = content[j];
         }
         i++;
     }
@@ -78,25 +81,39 @@ int inputfile()
 
     fclose(fptr);
     for (int j = 0; j < 5; ++j) {
-        printw("%s", Buffer[j]);
+        //printw("%s      length: %d\n", main->lines[j].Buffer, main->lines[j].length);
 
     }
 
 }
+
+
+
+void updateTerminalInfo(Terminal* main)
+{
+    //Update Terminal struct
+    getyx(stdscr, main->curY, main->curX);
+    getmaxyx(stdscr, main->terY, main->terX);
+
+
+}
+
+
 /***main***/
 int main()
 {
+    Terminal main = {.run = 1};
     setupnc();
 
 
-    inputfile();
+    inputfile(&main);
 
 
-    while(run)
+    while(main.run)
     {
-        updateTerminalInfo();
+        updateTerminalInfo(&main);
 
-        handlekeyinput();
+        handlekeyinput(&main);
 
 
         refresh();
@@ -104,57 +121,6 @@ int main()
 
     endwin();
 }
-
-
-
-
-void debugMode()
-{
-    while(run)
-    {
-        updateTerminalInfo();
-        mvprintw(0, 0, "curX: %d\ncurY: %d", curX, curY);
-        mvprintw(2, 0, "terX: %d\nterY: %d", terX, terY);
-
-
-
-        move(curY, curX);
-        int ch = wgetch(stdscr);
-
-        switch (ch) {
-            case KEY_UP:
-                if(curY > 0) curY--;
-                break;
-            case KEY_DOWN:
-                if(curY < terY) curY++;
-                break;
-            case KEY_LEFT:
-                curX--;
-                break;
-            case KEY_RIGHT:
-                curX++;
-                break;
-            case ctrl('c'):
-                run = 0;
-                break;
-        }
-        clear();
-        refresh();
-    }
-}
-
-
-void updateTerminalInfo()
-{
-    //Update Terminal struct
-    getyx(stdscr, curY, curX);
-    getmaxyx(stdscr, terY, terX);
-
-
-}
-
-
-
 
 
 
